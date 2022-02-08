@@ -4,11 +4,12 @@
  */
 package com.suggester.files.suggestingfiles.rest;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.suggester.files.suggestingfiles.controller.DataBindController;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.http.HttpStatus;
@@ -26,17 +27,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/suggestions")
 public class CitySuggestRest {
     
+    private Map<String, List> matchCities = new HashMap();
+    private DataBindController databinder = new DataBindController();
+        
+    /**
+     *
+     * @param q
+     * @param longitude
+     * @param latitude
+     * @return
+     */
     @GetMapping
-    public ResponseEntity<JsonNode> lookFor(@RequestParam String q){
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayNode matchCities = mapper.createArrayNode();
-        DataBindController databinder = new DataBindController();
+    public ResponseEntity<Map> lookFor(@RequestParam("q") String q,
+            @RequestParam("longitude") Optional<String> longitude, 
+            @RequestParam("latitude") Optional<String> latitude){
+        
         try {
-            databinder.searchCities(matchCities);
-        } catch (IOException ex) {
-            Logger.getLogger(ex.getMessage()).log(Level.SEVERE, null, ex);
+            Map<String, String> parameters = new HashMap<String, String>();
+            parameters.put("q", q);
+            if(longitude.isPresent()) parameters.put("longitude", longitude.toString());
+            if(longitude.isPresent()) parameters.put("latitude", latitude.toString());
+            
+            databinder.searchCities(matchCities, parameters);
+        } catch (IOException ioe) {
+            Logger.getLogger(ioe.getMessage()).log(Level.SEVERE, null, ioe.getCause());
         }
-        JsonNode suggestedCities = mapper.createObjectNode().set("suggestions", matchCities);
-        return new ResponseEntity<>(suggestedCities, HttpStatus.OK);
+        
+        return new ResponseEntity<Map>(matchCities, HttpStatus.OK);
     }
 }
