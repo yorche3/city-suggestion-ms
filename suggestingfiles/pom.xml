@@ -15,6 +15,7 @@
 	<description>City suggester micro service</description>
 	<properties>
 		<java.version>11</java.version>
+                <start-class>com.suggester.files.suggestingfiles.SuggestingfilesApplication</start-class>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -42,6 +43,14 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+                
+                <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-csv -->
+                <dependency>
+                        <groupId>com.fasterxml.jackson.dataformat</groupId>
+                        <artifactId>jackson-dataformat-csv</artifactId>
+                        <version>2.13.0</version>
+                        <type>jar</type>
+                </dependency>
 	</dependencies>
 
 	<build>
